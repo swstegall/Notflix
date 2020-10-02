@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "provider": "jsdelivr",
+      "library": "@fortawesome/fontawesome-free@5.14.0",
+      "destination": "wwwroot/lib/fortawesome/fontawesome-free/"
+    }
+  ]
+}
