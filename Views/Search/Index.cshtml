@@ -2,6 +2,30 @@
     ViewData["Title"] = "Search Results";
 }
 
-<h2>Search Results</h2>
-
-<p>Genre: @ViewData["genre"]</p>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Search Results</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p>Genre: @ViewData["genre"]</p>
+        </div>
+    </div>
+    @foreach (var movie in ViewData["movies"] as IList<Notflix.Controllers.Movie>)
+    {
+        <div class="row">
+            <div class="col">
+                <div class="card mb-3">
+                    <img src="@movie.backdropPath" style="width: 100%; height: auto;" class="card-img-top" alt="@movie.title">
+                    <div class="card-body">
+                        <h5 class="card-title">@movie.title</h5>
+                        <p class="card-text"><small class="text-muted">@movie.releaseDate</small></p>
+                        <p class="card-text">@movie.overview</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
