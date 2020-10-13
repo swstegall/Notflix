@@ -14,13 +14,29 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-danger border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <i class="fas fa-caret-square-right pr-2"></i>
+                    <i class="fas fa-caret-square-right pr-1"></i>
                     Notflix
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+                <form class="form-inline text-white">
+                    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                        <li class="nav-item pr-2">
+                            <i class="fas fa-user pr-1"></i>
+                            <span>@Program.u.username</span>
+                        </li>
+                        <li class="nav-item pr-2">
+                            <i class="fas fa-money-bill-wave pr-1"></i>
+                            <span>@String.Format("{0:C}", Program.u.money)</span>
+                        </li>
+                        <li class="nav-item pr-2">
+                            <i class="fas fa-ticket-alt pr-1"></i>
+                            <span>@Program.u.movies</span>
+                        </li>
+                    </ul>
+                </form>
             </div>
         </nav>
     </header>
@@ -29,7 +45,6 @@
             @RenderBody()
         </main>
     </div>
-
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2020 - Notflix - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>

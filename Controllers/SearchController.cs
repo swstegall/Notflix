@@ -11,11 +11,13 @@ using RestSharp.Serializers.NewtonsoftJson;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.Security.Cryptography;
+using System.Net;
 
 namespace Notflix.Controllers
 {
     public class Movie
     {   
+        public string id { get; set; }
         public string posterPath { get; set; }
         public string overview { get; set; }
         public string releaseDate { get; set; }
@@ -23,6 +25,12 @@ namespace Notflix.Controllers
         public string popularity { get; set; }
         public string voteCount { get; set; }
         public string voteAverage { get; set; }
+        public string videoLink { get; set; }
+        public double subtotalPrice { get; set; }
+        public double tax { get; set; }
+        public double totalPrice { get; set; }
+        public Boolean luckyBonusApplied { get; set; }
+        public double luckyBonusAmount { get; set; }
     }
 
     public class SearchController : Controller
@@ -115,7 +123,6 @@ namespace Notflix.Controllers
             return result;
         }
 
-
         public IActionResult Index(string genre)
         {
             System.Random random = new System.Random();
@@ -128,12 +135,20 @@ namespace Notflix.Controllers
             client.UseNewtonsoftJson();
             var request = new RestRequest($"discover/movie?api_key=e120410b431979ca8d761440057cf329&with_genre={genre}&without_genres={genreInverse}&year={randomYear}&page={randomPage}", DataFormat.Json);
             var response = client.Get(request);
-
             JObject responseObject = JObject.Parse(response.Content);
             JArray results = JArray.Parse(responseObject.GetValue("results").ToString());
             foreach(JObject movie in results)
             {
                 Movie current = new Movie();
+                var shouldApplyBonus = random.Next(1, 100);
+                if (shouldApplyBonus >= 80)
+                {
+                    current.luckyBonusApplied = true;
+                }
+                else
+                {
+                    current.luckyBonusApplied = false;
+                }
                 if (movie.GetValue("poster_path").ToString() != "")
                 {
                     current.posterPath = $"https://image.tmdb.org/t/p/original{movie.GetValue("poster_path").ToString()}";
@@ -142,8 +157,46 @@ namespace Notflix.Controllers
                 {
                     current.posterPath = "https://image.tmdb.org/t/p/original/gCgt1WARPZaXnq523ySQEUKinCs.jpg";
                 }
+                current.id = movie.GetValue("id").ToString();
+                var videoRequest = new RestRequest($"movie/{current.id}/videos?api_key=e120410b431979ca8d761440057cf329", DataFormat.Json);
+                var videoResponse = client.Get(videoRequest);
+                if (videoResponse.StatusCode == HttpStatusCode.OK)
+                {
+                    JObject videoResponseObject = JObject.Parse(videoResponse.Content);
+                    JArray videoResults = JArray.Parse(videoResponseObject.GetValue("results").ToString());
+                    if (videoResults.Count >= 1)
+                    {
+                        var first = (JObject) videoResults[0];
+                        string site = first.GetValue("site").ToString();
+                        if (site == "Vimeo")
+                        {
+                            current.videoLink = $"https://vimeo.com/{first.GetValue("key").ToString()}";
+                        }
+                        else
+                        {
+                            current.videoLink = $"https://youtu.be/{first.GetValue("key").ToString()}";
+                        }
+                    }
+                    else
+                    {
+                        current.videoLink = "false";
+                    }
+                }
+                else
+                {
+                    current.videoLink = "false";
+                }
                 current.overview = movie.GetValue("overview").ToString();
                 current.releaseDate = movie.GetValue("release_date").ToString();
+                double releaseYear = Double.Parse(current.releaseDate.Substring(0, 4));
+                current.subtotalPrice = 29.0 - ((30.0 * (2020.0 - releaseYear)) / 70.0);
+                current.tax = current.subtotalPrice * 0.0625;
+                current.totalPrice = current.subtotalPrice + current.tax;
+                if (current.luckyBonusApplied)
+                {
+                    current.luckyBonusAmount = current.subtotalPrice / 10.0;
+                    current.totalPrice -= current.luckyBonusAmount;
+                }
                 current.title = movie.GetValue("title").ToString();
                 current.popularity = movie.GetValue("popularity").ToString();
                 current.voteCount = movie.GetValue("vote_count").ToString();

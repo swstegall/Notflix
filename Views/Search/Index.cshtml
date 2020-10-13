@@ -28,7 +28,49 @@
                             <div class="row">
                                 <div class="col">
                                     <p class="card-text"><small class="text-muted">@movie.releaseDate</small></p>
+                                    <table class="table table-sm table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    Popularity
+                                                </th>
+                                                <th>
+                                                    Rating
+                                                </th>
+                                                <th>
+                                                    Rating Votes
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    @movie.popularity
+                                                </td>
+                                                <td>
+                                                    @movie.voteAverage
+                                                </td>
+                                                <td>
+                                                    @movie.voteCount
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                     <p class="card-text">@movie.overview</p>
+                                    <p class="card-text">
+                                        <small class="text-muted">
+                                            Price: @String.Format("{0:C}", movie.subtotalPrice), Tax: @String.Format("{0:C}", movie.tax)
+                                            @if (movie.luckyBonusApplied)
+                                            {
+                                                <div>Lucky 10% Discount: @String.Format("{0:C}", movie.luckyBonusAmount)</div>
+                                            }
+                                        </small>
+                                    </p>
+                                    <button type="button" class="btn btn-secondary" onclick="window.location.reload(true)">Purchase for @String.Format("{0:C}", movie.totalPrice)</button>
+                                    @if (@movie.videoLink != "false")
+                                    {
+                                        <a class="btn btn-secondary" href="@movie.videoLink" role="button">View Trailer</a>
+                                    }
                                 </div>
                                 <div class="col-2">
                                     <img src="@movie.posterPath" style="max-width: 100%; height: auto;" alt="poster">
