@@ -16,7 +16,7 @@ namespace Notflix.Controllers
 {
     public class Movie
     {   
-        public string backdropPath { get; set; }
+        public string posterPath { get; set; }
         public string overview { get; set; }
         public string releaseDate { get; set; }
         public string title { get; set; }
@@ -134,13 +134,13 @@ namespace Notflix.Controllers
             foreach(JObject movie in results)
             {
                 Movie current = new Movie();
-                if (movie.GetValue("backdrop_path").ToString() != "")
+                if (movie.GetValue("poster_path").ToString() != "")
                 {
-                    current.backdropPath = $"https://image.tmdb.org/t/p/original{movie.GetValue("backdrop_path").ToString()}";
+                    current.posterPath = $"https://image.tmdb.org/t/p/original{movie.GetValue("poster_path").ToString()}";
                 }
                 else
                 {
-                    current.backdropPath = "https://image.tmdb.org/t/p/original/61dsn6ZsvI3BPNEHCQeDZeuhF7K.jpg";
+                    current.posterPath = "https://image.tmdb.org/t/p/original/gCgt1WARPZaXnq523ySQEUKinCs.jpg";
                 }
                 current.overview = movie.GetValue("overview").ToString();
                 current.releaseDate = movie.GetValue("release_date").ToString();
